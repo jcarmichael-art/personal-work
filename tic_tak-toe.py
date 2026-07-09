@@ -1,7 +1,6 @@
 
-mydict = {"a":{1:"",2:"",3:""},
-          "b":{1:"",2:"",3:""},
-          "C":{1:"",2:"",3:""}}
+
+
 
 
 def coord_validator(board):
@@ -10,7 +9,7 @@ def coord_validator(board):
         if len(num) == 2:
             if num[0].isdigit():
                 number = int(num[0])
-                if num[1] in mydict and number in range(1,4):
+                if num[1] in board and number in range(1,4):
                     letter = num[1]
 
                     if board[letter][number] == "_":
@@ -22,7 +21,7 @@ def coord_validator(board):
 
             if num[1].isdigit():
                 number = int(num[1])
-                if num[0] in mydict and number in range(1,4):
+                if num[0] in board and number in range(1,4):
                     letter = num[0]
                     if board[letter][number] == "_":
                         return letter, number
@@ -30,11 +29,8 @@ def coord_validator(board):
                         print("Already been played")
                 else:
                     print("Invalid coords")
-                
             else:
                 print("Invalid coords")
-
-
         else:        
             print("Invalid coords")
         
@@ -74,7 +70,7 @@ class Board:
 def main():
 
     player1 = Player("jake", "o", False)
-    player2 = Player("gage", "x", False)
+    player2 = Player("Megan Thee Stallion", "x", False)
     players = [player1, player2]
     board1 = Board()
 
