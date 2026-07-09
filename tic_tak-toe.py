@@ -3,23 +3,8 @@ mydict = {"a":{1:"",2:"",3:""},
           "b":{1:"",2:"",3:""},
           "C":{1:"",2:"",3:""}}
 
-def digit_checker(num):
-    if num[0].isdigit():
-        number = int(num[0])
-        if num[1] is str:
-            letter = num[1]
-            return True, letter, number
 
-    elif num[1].isdigit():
-         number = int(num[1])
-         if num[0] is str:
-            letter = num[0]
-            return True, letter, number
-         
-    else:
-         return False, " ", " "
-
-def coord_validator():
+def coord_validator(board):
     while True:
         num = input("Enter coords > ")
         if len(num) == 2:
@@ -27,18 +12,33 @@ def coord_validator():
                 number = int(num[0])
                 if num[1] in mydict and number in range(1,4):
                     letter = num[1]
-                    return letter, number
 
-            elif num[1].isdigit():
+                    if board[letter][number] == "_":
+                        return letter, number
+                    else:
+                        print("Already been played")
+                else:
+                    print("Invalid coords")
+
+            if num[1].isdigit():
                 number = int(num[1])
                 if num[0] in mydict and number in range(1,4):
                     letter = num[0]
-                    return letter, number
+                    if board[letter][number] == "_":
+                        return letter, number
+                    else:
+                        print("Already been played")
+                else:
+                    print("Invalid coords")
                 
-        print("Invalid coords")
-        
-        
+            else:
+                print("Invalid coords")
 
+
+        else:        
+            print("Invalid coords")
+        
+        
 class Computer:
     def __init__(self,name):
         self.name = name
@@ -57,11 +57,11 @@ class Board:
                       "c":{1:"_",2:"_",3:"_"}}
         
     def x_turn(self,):
-        letter, number = coord_validator()
+        letter, number = coord_validator(self.board)
         self.board[letter][number] = "X"
 
     def o_turn(self,):
-        letter, number = coord_validator()
+        letter, number = coord_validator(self.board)
         self.board[letter][number] = "O"
 
     def print_board(self):
