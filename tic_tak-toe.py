@@ -23,7 +23,6 @@ def coord_validator():
     while True:
         num = input("Enter coords > ")
         if len(num) == 2:
-            print("lencheck")
             if num[0].isdigit():
                 number = int(num[0])
                 if num[1] in mydict and number in range(1,4):
@@ -32,10 +31,10 @@ def coord_validator():
 
             elif num[1].isdigit():
                 number = int(num[1])
-                if num[0] in mydict:
+                if num[0] in mydict and number in range(1,4):
                     letter = num[0]
-                    if letter == str and number == int:
-                        return letter, number
+                    return letter, number
+                
         print("Invalid coords")
         
         
@@ -57,15 +56,13 @@ class Board:
                       "b":{1:"_",2:"_",3:"_"},
                       "c":{1:"_",2:"_",3:"_"}}
         
-    def x_turn(self, letter, number):
-        is_num = digit_checker(number)
-        self.board[letter][is_num] = "X"
+    def x_turn(self,):
+        letter, number = coord_validator()
+        self.board[letter][number] = "X"
 
     def o_turn(self,):
-            coord = coord_validator()
-            letter, number = coord
-
-            self.board[letter][number] = "O"
+        letter, number = coord_validator()
+        self.board[letter][number] = "O"
 
     def print_board(self):
             print(f'  1 2 3')
@@ -90,22 +87,6 @@ def main():
             elif player.letter == "o":
                  board1.o_turn()
 
-
-    while not player1.winner and not player2.winner:
-        if player1.letter == "x":
-            board1.print_board()
-
-            board1.x_turn(input("Enter letter column"),input("Enter number column"), player1.name)
-        elif player2.letter == "o":
-            board1.print_board()
-            board1.o_turn(input("Enter letter column"),input("Enter number column", player2.name))
-        if player1.letter == "x":
-            board1.print_board()
-            board1.x_turn(input("Enter letter column"),input("Enter number column"), player1.name)
-        elif player2.letter == "o":
-            board1.print_board()
-            board1.o_turn(input("Enter letter column"),input("Enter number column", player2.name))
-    print("test")
 
 
 if __name__ == "__main__":
