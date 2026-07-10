@@ -34,36 +34,6 @@ class Computer(Player):
         self.letter = letter
 
 
-#this just prints off all types of current posisions. this should be remade as a Board method later
-    def x_turn2(self,board):
-        print(f'x pos {self.x_pos(board)}')
-        print(f'o pos {self.o_pos(board)}')
-        print(f'pop pos {self.pos_pos(board)}')
-#returns all x positions in a ["a1", "a2"] format
-    def x_pos(self, board):
-        x_pos = []
-        for letter in board:
-            for number in board[letter]:
-                if board[letter][number] == "x":
-                    x_pos.append(f"{letter}{number}")
-        return x_pos
-#returns all o postions in a ["a1", "a2"] format
-    def o_pos(self, board):
-        o_pos = []
-        for letter in board:
-            for number in board[letter]:
-                if board[letter][number] == "o":
-                    o_pos.append(f"{letter}{number}")
-        return o_pos
-#returns all possible postions in a ["a1", "a2"] format (SHOULD BE HELPFUL FOR MAKING THE AI)
-    def pos_pos(self, board):
-        pos_pos = []
-        for letter in board:
-            for number in board[letter]:
-                if board[letter][number] == "_":
-                    pos_pos.append(f'{letter}{number}')
-        return pos_pos
-
 #computer turns for if it is playing as x's or o's (currently not a feature, computer is always x's atm)
     def x_turn(self,board):
         letter, number = coord_validator(board)
@@ -151,7 +121,7 @@ class Board:
                         if ele in convert_board:
                             win_num.append(convert_board[ele])
 
-
+            #convert all o positions into a list of ints
             elif player.letter == "o":
                 o_pos = self.o_pos()
                 if len(o_pos) >= 3: 
@@ -167,67 +137,8 @@ class Board:
                         if i + 2 < len(win_num):
                             #checks to be sure none of the numbers are of the same index value
                             if win_num[i] + win_num[j] + win_num[k] == 15 and i != j != k != i:
-                                self.players[1].winner = True
+                                player.winner = True
 
-
-
-
-
-
-
-
-    #checks win condition, this is called in the main program and is not automatically ran when a turn happens (I may change this)
-    def x_win_check(self):
-
-        #winner key (every stright line adds to 15, there is no possible combination that adds to 15 and isnt a win condition)
-        convert_board = {"a1":8, "a2":1, "a3":6,
-                         "b1":3, "b2":5, "b3":7,
-                         "c1":4, "c2":9, "c3":2}
-        
-        #convert all x positions into a list of ints
-        x_pos = self.players[1].x_pos(self.board)
-        if len(x_pos) >= 3: 
-            win_num = []
-            for ele in x_pos:
-                if ele in convert_board:
-                    win_num.append(convert_board[ele])
-
-            # check if there is a combination of 3 unique ints that add to 15
-            for i in range(len(win_num)):
-                for j in range(len(win_num)):
-                    for k in range(len(win_num)):
-                        #prevents indexing out of range
-                        if i + 2 < len(win_num):
-                            #checks to be sure none of the numbers are of the same index value
-                            if win_num[i] + win_num[j] + win_num[k] == 15 and i != j != k != i:
-                                self.players[1].winner = True
-
-
-    #checks win condition, this is called in the main program and is not automatically ran when a turn happens (I may change this)
-    def o_win_check(self):
-
-        #winner key (every stright line adds to 15, there is no possible combination that adds to 15 and isnt a win condition)
-        convert_board = {"a1":8, "a2":1, "a3":6,
-                         "b1":3, "b2":5, "b3":7,
-                         "c1":4, "c2":9, "c3":2}
-        
-        #convert all o positions into a list of ints
-        o_pos = self.players[1].o_pos(self.board)
-        if len(o_pos) >= 3: 
-            win_num = []
-            for ele in o_pos:
-                if ele in convert_board:
-                    win_num.append(convert_board[ele])
-
-            # check if there is a combination of 3 unique ints that add to 15
-            for i in range(len(win_num)):
-                for j in range(len(win_num)):
-                    for k in range(len(win_num)):
-                        #prevents indexing out of range
-                        if i + 2 < len(win_num):
-                            #checks to be sure none of the numbers are of the same index value
-                            if win_num[i] + win_num[j] + win_num[k] == 15 and i != j != k != i:
-                                self.players[0].winner = True
 
     #prints updated board positions
     def print_board(self):
