@@ -22,16 +22,34 @@ def coord_validator(board):
         else:
             print("Invalid input")       
         
-        
-class Computer:
-    def __init__(self,name):
-        self.name = name
 
 class Player:
-     def __init__(self, name, letter, bool):
-          self.name = name
-          self.letter = letter
-          self.winner = bool
+    def __init__(self, name, winner):
+        self.name = name
+        self.winner = winner
+        
+class Computer(Player):
+    def __init__(self,name,winner):
+        super().__init__(name, winner)
+        self.name = name
+        self.winner = winner
+        self.letter = "x"
+
+    def x_turn(self,):
+        letter, number = coord_validator(self.board)
+        self.board[letter][number] = "X"
+
+class Person(Player):
+
+    def __init__(self, name, winner):
+        super().__init__(name, winner)
+        self.name = name
+        self.winner  = winner
+        self.letter = "o"
+
+    def o_turn(self,):
+        letter, number = coord_validator(self.board)
+        self.board[letter][number] = "O"
 
 
 class Board:
@@ -57,11 +75,13 @@ class Board:
 
 def main():
 
-    player1 = Player("jake", "o", False)
-    player2 = Player("Megan Thee Stallion", "x", False)
-    players = [player1, player2]
+    person1 = Person("Jake", False)
+    computa1 = Computer("computa", False)
+
+
+    players = [person1, computa1]
     board1 = Board()
-    while not player1.winner and not player2.winner:
+    while not person1.winner and not computa1.winner:
         for player in players:
             board1.print_board()
             print(f"{player.name}'s turn, you are {player.letter}'s")
