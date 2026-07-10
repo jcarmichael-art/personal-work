@@ -1,38 +1,26 @@
 
+from tkinter import *
 
-
-
+#window = Tk()
+#window.geometry("420x420")
+#window.title("Tik_Tac_Toe")
+#window.mainloop()
 
 def coord_validator(board):
     while True:
+        letter = None
+        number = None
         num = input("Enter coords > ")
-        if len(num) == 2:
-            if num[0].isdigit():
-                number = int(num[0])
-                if num[1] in board and number in range(1,4):
-                    letter = num[1]
-
-                    if board[letter][number] == "_":
-                        return letter, number
-                    else:
-                        print("Already been played")
-                else:
-                    print("Invalid coords")
-
-            if num[1].isdigit():
-                number = int(num[1])
-                if num[0] in board and number in range(1,4):
-                    letter = num[0]
-                    if board[letter][number] == "_":
-                        return letter, number
-                    else:
-                        print("Already been played")
-                else:
-                    print("Invalid coords")
-            else:
-                print("Invalid coords")
-        else:        
-            print("Invalid coords")
+        for i in range(len(num)):
+            if len(num) == 2:
+                if num[i].isdigit() and number == None:
+                    number = int(num[i])
+                elif letter == None and num[i] in board:
+                    letter = num[i]
+        if number in range(0,4) and letter in board and board[letter][number] == "_":
+            return letter, number    
+        else:
+            print("Invalid input")       
         
         
 class Computer:
@@ -73,7 +61,6 @@ def main():
     player2 = Player("Megan Thee Stallion", "x", False)
     players = [player1, player2]
     board1 = Board()
-
     while not player1.winner and not player2.winner:
         for player in players:
             board1.print_board()
@@ -82,8 +69,6 @@ def main():
                  board1.x_turn()
             elif player.letter == "o":
                  board1.o_turn()
-
-
 
 if __name__ == "__main__":
     main()
