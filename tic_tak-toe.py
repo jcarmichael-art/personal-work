@@ -29,27 +29,35 @@ class Player:
         self.winner = winner
         
 class Computer(Player):
-    def __init__(self,name,winner):
+    def __init__(self,name,winner,letter):
         super().__init__(name, winner)
         self.name = name
         self.winner = winner
-        self.letter = "x"
+        self.letter = letter
 
-    def x_turn(self,):
-        letter, number = coord_validator(self.board)
-        self.board[letter][number] = "X"
+    def x_turn(self,board):
+        letter, number = coord_validator(board)
+        board[letter][number] = "X"
+
+    def o_turn(self, board):
+        letter, number = coord_validator(board)
+        board[letter][number] = "O"
 
 class Person(Player):
 
-    def __init__(self, name, winner):
+    def __init__(self, name, winner, letter):
         super().__init__(name, winner)
         self.name = name
         self.winner  = winner
-        self.letter = "o"
+        self.letter = letter
+    
+    def x_turn(self,board):
+        letter, number = coord_validator(board)
+        self.board[letter][number] = "X"
 
-    def o_turn(self,):
-        letter, number = coord_validator(self.board)
-        self.board[letter][number] = "O"
+    def o_turn(self, board):
+        letter, number = coord_validator(board)
+        board[letter][number] = "O"
 
 
 class Board:
@@ -75,12 +83,11 @@ class Board:
 
 def main():
 
-    person1 = Person("Jake", False)
-    computa1 = Computer("computa", False)
-
-
+    person1 = Person("Jake", False, "o")
+    computa1 = Computer("computa", False, "x")
     players = [person1, computa1]
     board1 = Board()
+
     while not person1.winner and not computa1.winner:
         for player in players:
             board1.print_board()
@@ -88,7 +95,7 @@ def main():
             if player.letter == "x":
                  board1.x_turn()
             elif player.letter == "o":
-                 board1.o_turn()
+                 player.o_turn(board1.board)
 
 if __name__ == "__main__":
     main()
