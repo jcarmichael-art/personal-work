@@ -65,10 +65,14 @@ class Computer(Player):
             letter, number = coord_validator2(board.board, move, False)
             board.board[letter][number] = "x"
             if board.win_check("x"):
-                break
+                return
+            board.board[letter][number] = "o"
+            if board.win_check("o"):
+                board.board[letter][number] = "x"
+                return
             else:
                 board.board[letter][number] = "_"
-                print("test1")
+
 
         if not board.win_check("x"):
     
@@ -108,8 +112,8 @@ class Person(Player):
 class Board:
     def __init__(self):
         #inital board in a easy to read format
-        self.board = {"a":{1:"x",2:"_",3:"_"},
-                      "b":{1:"x",2:"_",3:"_"},
+        self.board = {"a":{1:"_",2:"_",3:"_"},
+                      "b":{1:"_",2:"_",3:"_"},
                       "c":{1:"_",2:"_",3:"_"}}
         
         #list of players to be referenced for other operations
@@ -198,8 +202,10 @@ def main():
 
     #create board and add players to it
     board1 = Board()
-    board1.add_player(person1)
+
     board1.add_player(computa1)
+    board1.add_player(person1)
+
 
 
     while not person1.winner and not computa1.winner:
