@@ -192,13 +192,12 @@ def main():
     while not person1.winner and not computa1.winner and len(board1.pos_pos()) != 0:
 
         for player in board1.players:
-            board1.print_board()
 
             if len(board1.pos_pos()) == 0:
+                 board1.print_board()
                  print("It's a tie!")
 
             elif player.letter == "x":
-                 print(f"{player.name}'s turn, you are {player.letter}'s")
                  player.x_turn(board1)
                  if board1.win_check("x"):        
                      player.winner = True
@@ -207,6 +206,7 @@ def main():
                      break         
                  
             elif player.letter == "o":
+                 board1.print_board()
                  print(f"{player.name}'s turn, you are {player.letter}'s")
                  player.o_turn(board1.board)
                  if board1.win_check("o"):
