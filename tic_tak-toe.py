@@ -1,11 +1,13 @@
 import random
 
-#validate coordinates no matter input
-def coord_validator(board):
+#validate coordinates based on user input
+#is able to capture input in a [a1] or [1a] format
+def coord_validator_player(board):
     while True:
         letter = None
         number = None
-        num = input("Enter coords > ")
+        num = input("Enter coords > ").lower()
+        #num = num.lower()
         #general input validation
         for i in range(len(num)):
             if len(num) == 2:
@@ -18,29 +20,6 @@ def coord_validator(board):
             return letter, number    
         else:
             print("Invalid input")       
-
-
-def coord_validator2(board, num, random_):
-    while True:
-        if random_ == True:
-            letters = "abc"
-            random1 = random.randint(0,2)
-            random2 = random.randint(1,3)
-            random2 = str(random2)
-            num = letters[random1] + random2
-    
-        letter = None
-        number = None
-        #general input validation
-        for i in range(len(num)):
-            if len(num) == 2:
-                if num[i].isdigit() and number == None:
-                    number = int(num[i])
-                elif letter == None and num[i] in board:
-                    letter = num[i]
-        #final input validation. prevents instances of ab or 12
-        if number in range(0,4) and letter in board and board[letter][number] == "_":
-            return letter, number    
         
 #parent class of all players
 class Player:
@@ -57,35 +36,36 @@ class Computer(Player):
         self.letter = letter
 
 
-#computer turns for if it is playing as x's or o's (currently not a feature, computer is always x's atm)
+#computer's turn (x's turn)
     def x_turn(self,board):
+
+        #get a list of all possible moves in a ["a1", "a2"] format
         possible_positions = board.pos_pos()
 
+        #iterate through possible games, only goes one turn cycle atm. (I think I figured out how to implement a minimax algorithm for even better computer moves. will try it later.)
+        #prioritizes quickest victory (prevents unneeded blocking moves)
         for move in possible_positions:
-            letter, number = coord_validator2(board.board, move, False)
+            letter = move[0]
+            number = int(move[1])
             board.board[letter][number] = "x"
-            if board.win_check("x"):
+            if board.win_check("x"):              
                 return
             board.board[letter][number] = "o"
             if board.win_check("o"):
                 board.board[letter][number] = "x"
                 return
-            else:
-                board.board[letter][number] = "_"
-
-
-        if not board.win_check("x"):
-    
-            letter, number = coord_validator2(board.board, None, True)
-            board.board[letter][number] = "x"
-
-
-                
+            #resets the position if no winning or losing move is found
+            board.board[letter][number] = "_"
             
-        
-
-
-
+        # if there are no winning or losing positions for the computer
+        if board.win_check("x") != True:
+            #pulls a random move from the current possible moves. Board method regenerates a updated list of possible moves every turn.
+            board.board[letter][number] = "_"
+            random_move = possible_positions[random.randint(0, len(possible_positions)-1)]
+            letter = random_move[0]
+            number = int(random_move[1])
+            board.board[letter][number] = "x"
+            return
 
 
 #child of the player class
@@ -99,16 +79,14 @@ class Person(Player):
 
 #person turns for if it is playing as x's or o's (currently not a feature, person is always o's atm)
     def x_turn(self,board):
-        letter, number = coord_validator(board)
+        letter, number = coord_validator_player(board)
         board[letter][number] = "x"
 
     def o_turn(self, board):
-        letter, number = coord_validator(board)
+        letter, number = coord_validator_player(board)
         board[letter][number] = "o"
 
         
-
-
 class Board:
     def __init__(self):
         #inital board in a easy to read format
@@ -126,6 +104,7 @@ class Board:
     #returns all x positions in a ["a1", "a2"] format
     def x_pos(self):
         x_pos = []
+        x_pos.clear()
         for letter in self.board:
             for number in self.board[letter]:
                 if self.board[letter][number] == "x":
@@ -134,6 +113,7 @@ class Board:
     #returns all o postions in a ["a1", "a2"] format
     def o_pos(self):
         o_pos = []
+        o_pos.clear()
         for letter in self.board:
             for number in self.board[letter]:
                 if self.board[letter][number] == "o":
@@ -153,8 +133,7 @@ class Board:
  #checks win condition, this is called in the main program and is not automatically ran when a turn happens (I may change this)
     def win_check(self, letter):
 
-
-        #winner key (every stright line adds to 15, there is no possible combination that adds to 15 and isnt a win condition)
+        #winner key (every stright line adds to 15(look up "magic square" if this make no sense), there is no possible combination that adds to 15 and isnt a win condition)
         convert_board = {"a1":8, "a2":1, "a3":6,
                         "b1":3, "b2":5, "b3":7,
                         "c1":4, "c2":9, "c3":2}
@@ -184,10 +163,9 @@ class Board:
                         #checks to be sure none of the numbers are of the same index value
                         if win_num[i] + win_num[j] + win_num[k] == 15 and i != j != k != i:
                             return True
-        return False
 
 
-    #prints updated board positions
+    #prints current board positions
     def print_board(self):
             print(f'  1 2 3')
             print(f'a {self.board["a"][1]} {self.board["a"][2]} {self.board["a"][3]}')
@@ -202,35 +180,35 @@ def main():
 
     #create board and add players to it
     board1 = Board()
-
     board1.add_player(computa1)
     board1.add_player(person1)
 
 
-
-    while not person1.winner and not computa1.winner:
+    while not person1.winner and not computa1.winner and len(board1.pos_pos()) != 0:
 
         for player in board1.players:
             board1.print_board()
-            print(f"{player.name}'s turn, you are {player.letter}'s")
-            if player.letter == "x":
+
+            if len(board1.pos_pos()) == 0:
+                 print("It's a tie!")
+
+            elif player.letter == "x":
+                 print(f"{player.name}'s turn, you are {player.letter}'s")
                  player.x_turn(board1)
                  if board1.win_check("x"):        
                      player.winner = True
+                     board1.print_board()
+                     print(f'{player.name} is the winner!')
                      break         
                  
             elif player.letter == "o":
+                 print(f"{player.name}'s turn, you are {player.letter}'s")
                  player.o_turn(board1.board)
                  if board1.win_check("o"):
                      player.winner = True
+                     board1.print_board()
+                     print(f'{player.name} is the winner!')
                      break
-
-        for player in board1.players:
-            if player.winner == True:
-                board1.print_board()
-                print(f'{player.name} is the winner!')
-
-
 
 if __name__ == "__main__":
     main()
