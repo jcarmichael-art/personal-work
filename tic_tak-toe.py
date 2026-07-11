@@ -50,13 +50,18 @@ class Computer(Player):
             board.board[letter][number] = "x"
             if board.win_check("x"):              
                 return
-            board.board[letter][number] = "o"
-            if board.win_check("o"):
-                board.board[letter][number] = "x"
-                return
-            #resets the position if no winning or losing move is found
             board.board[letter][number] = "_"
-            
+
+        for move in possible_positions:
+            letter = move[0]
+            number = int(move[1])
+            board.board[letter][number] = "o"
+            if board.win_check("o"):         
+                board.board[letter][number] = "x"     
+                return
+            board.board[letter][number] = "_"
+
+
         # if there are no winning or losing positions for the computer
         if board.win_check("x") != True:
             #pulls a random move from the current possible moves. Board method regenerates a updated list of possible moves every turn.
