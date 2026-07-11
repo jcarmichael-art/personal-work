@@ -180,7 +180,7 @@ class Board:
 
 def main():
     #create players
-    person1 = Person("Jake", False, "o")
+    person1 = Person(input("Enter your name: > ").title(), False, "o")
     computa1 = Computer("computa", False, "x")
 
     #create board and add players to it
