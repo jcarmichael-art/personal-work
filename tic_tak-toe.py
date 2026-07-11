@@ -41,9 +41,11 @@ class Computer(Player):
 
         #get a list of all possible moves in a ["a1", "a2"] format
         possible_positions = board.pos_pos()
+        random_move = possible_positions[random.randint(0, len(possible_positions)-1)]
 
         #iterate through possible games, only goes one turn cycle atm. (I think I figured out how to implement a minimax algorithm for even better computer moves. will try it later.)
         #prioritizes quickest victory (prevents unneeded blocking moves)
+        #rule 1: if there is a winning move this turn, play it
         for move in possible_positions:
             letter = move[0]
             number = int(move[1])
@@ -52,6 +54,7 @@ class Computer(Player):
                 return
             board.board[letter][number] = "_"
 
+        #rule 2: if you have no winning move and your opponent will have a winning move next turn, block it
         for move in possible_positions:
             letter = move[0]
             number = int(move[1])
@@ -63,7 +66,19 @@ class Computer(Player):
 
 
         # if there are no winning or losing positions for the computer
-        if board.win_check("x") != True:
+        # rule 3: if it is the first move: always play in the corners
+        if len(possible_positions) == 9:
+            print("test")
+            range_int = [1,3]
+            range_letter =["a","c"]
+            random_letter = random.choice(range_letter)
+            random_num = random.choice(range_int)
+            print(random_letter,random_num)
+            board.board[random_letter][random_num] = "x"
+            return
+
+        # rule 4: if there is no winning or losing play and it is not the first move, play in a random square.
+        elif board.win_check("x") != True:
             #pulls a random move from the current possible moves. Board method regenerates a updated list of possible moves every turn.
             board.board[letter][number] = "_"
             random_move = possible_positions[random.randint(0, len(possible_positions)-1)]
@@ -180,7 +195,7 @@ class Board:
 
 def main():
     #create players
-    person1 = Person(input("Enter your name: > ").title(), False, "o")
+    person1 = Person(("jake").title(), False, "o")
     computa1 = Computer("computa", False, "x")
 
     #create board and add players to it
@@ -214,6 +229,8 @@ def main():
                      board1.print_board()
                      print(f'{player.name} is the winner!')
                      break
+      
+    
 
 if __name__ == "__main__":
     main()
