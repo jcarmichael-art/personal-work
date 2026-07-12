@@ -64,16 +64,13 @@ class Computer(Player):
                 return
             board.board[letter][number] = "_"
 
-
         # if there are no winning or losing positions for the computer
         # rule 3: if it is the first move: always play in the corners
         if len(possible_positions) == 9:
-            print("test")
             range_int = [1,3]
             range_letter =["a","c"]
             random_letter = random.choice(range_letter)
             random_num = random.choice(range_int)
-            print(random_letter,random_num)
             board.board[random_letter][random_num] = "x"
             return
 
@@ -87,6 +84,55 @@ class Computer(Player):
             board.board[letter][number] = "x"
             return
 
+#computer's turn (x's turn)
+    def o_turn(self,board):
+
+        #get a list of all possible moves in a ["a1", "a2"] format
+        possible_positions = board.pos_pos()
+        random_move = possible_positions[random.randint(0, len(possible_positions)-1)]
+
+        #iterate through possible games, only goes one turn cycle atm. (I think I figured out how to implement a minimax algorithm for even better computer moves. will try it later.)
+        #prioritizes quickest victory (prevents unneeded blocking moves)
+        #rule 1: if there is a winning move this turn, play it
+        for move in possible_positions:
+            letter = move[0]
+            number = int(move[1])
+            board.board[letter][number] = "o"
+            if board.win_check("o"):              
+                return
+            board.board[letter][number] = "_"
+
+        #rule 2: if you have no winning move and your opponent will have a winning move next turn, block it
+        for move in possible_positions:
+            letter = move[0]
+            number = int(move[1])
+            board.board[letter][number] = "x"
+            if board.win_check("x"):         
+                board.board[letter][number] = "o"     
+                return
+            board.board[letter][number] = "_"
+
+        # if there are no winning or losing positions for the computer
+        # rule 3: if it is the first move: always play in the corners
+        if len(possible_positions) == 9:
+            range_int = [1,3]
+            range_letter =["a","c"]
+            random_letter = random.choice(range_letter)
+            random_num = random.choice(range_int)
+            board.board[random_letter][random_num] = "o"
+            return
+
+        # rule 4: if there is no winning or losing play and it is not the first move, play in a random square.
+        elif board.win_check("o") != True:
+            #pulls a random move from the current possible moves. Board method regenerates a updated list of possible moves every turn.
+            board.board[letter][number] = "_"
+            random_move = possible_positions[random.randint(0, len(possible_positions)-1)]
+            letter = random_move[0]
+            number = int(random_move[1])
+            board.board[letter][number] = "o"
+            return
+
+
 
 #child of the player class
 class Person(Player):
@@ -99,12 +145,12 @@ class Person(Player):
 
 #person turns for if it is playing as x's or o's (currently not a feature, person is always o's atm)
     def x_turn(self,board):
-        letter, number = coord_validator_player(board)
-        board[letter][number] = "x"
+        letter, number = coord_validator_player(board.board)
+        board.board[letter][number] = "x"
 
     def o_turn(self, board):
-        letter, number = coord_validator_player(board)
-        board[letter][number] = "o"
+        letter, number = coord_validator_player(board.board)
+        board.board[letter][number] = "o"
 
         
 class Board:
@@ -194,42 +240,68 @@ class Board:
 
 
 def main():
-    #create players
-    person1 = Person(("jake").title(), False, "o")
-    computa1 = Computer("computa", False, "x")
-
-    #create board and add players to it
+    #build board
     board1 = Board()
-    board1.add_player(computa1)
-    board1.add_player(person1)
+
+    #validate player info
+    name = input("What is your name: >").title()
+    while True:
+        letter = input('What letter do you want to play? ("x" or "o") >').lower()
+        if letter == "x" or letter == "o":
+            break
+        else:
+            print('Please enter either ("x" or "o")')
+
+    #add players in order based on what letter person1 chose to play as. x always plays first
+    person1 = Person(name, False, letter)
+    if person1.letter == "o":
+        computa1 = Computer("computa", False, "x")
+        board1.add_player(computa1)
+        board1.add_player(person1)
+    else:
+        computa1 = Computer("computa", False, "o")    
+        board1.add_player(person1)
+        board1.add_player(computa1)  
 
 
+
+    #game loop
     while not person1.winner and not computa1.winner and len(board1.pos_pos()) != 0:
 
+        #check for tie
         for player in board1.players:
-
             if len(board1.pos_pos()) == 0:
                  board1.print_board()
                  print("It's a tie!")
 
+            #x turn
             elif player.letter == "x":
+                #print gameboard and current player based on which player is an actual person (makes output in console easier to read)
+                 if isinstance(player, Person):
+                    print(f"{player.name}'s turn, you are {player.letter}'s")
+                    board1.print_board()
+                #run turn and check if player won
                  player.x_turn(board1)
-                 if board1.win_check("x"):        
+                 if board1.win_check("x"):
                      player.winner = True
                      board1.print_board()
                      print(f'{player.name} is the winner!')
-                     break         
+                     break        
                  
+            #o turn     
             elif player.letter == "o":
-                 board1.print_board()
-                 print(f"{player.name}'s turn, you are {player.letter}'s")
-                 player.o_turn(board1.board)
+                 #print gameboard and current player based on which player is an actual person (makes output in console easier to read)
+                 if isinstance(player, Person):
+                    print(f"{player.name}'s turn, you are {player.letter}'s")
+                    board1.print_board()
+                #run turn and check if player won
+                 player.o_turn(board1)
                  if board1.win_check("o"):
                      player.winner = True
                      board1.print_board()
                      print(f'{player.name} is the winner!')
                      break
-      
+  
     
 
 if __name__ == "__main__":
