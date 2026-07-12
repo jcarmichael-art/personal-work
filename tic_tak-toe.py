@@ -302,7 +302,6 @@ def main():
                      print(f'{player.name} is the winner!')
                      break
   
-    
 
 if __name__ == "__main__":
     main()
